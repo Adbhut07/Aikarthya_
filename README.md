@@ -6,8 +6,8 @@
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/Adbhut07/BlogApp.git
-    cd BlogApp
+    git clone https://github.com/Adbhut07/Aikarthya_hack24.git
+    cd Aikarthya_hack24
     ```
 
 2. **Install backend dependencies:**
@@ -43,7 +43,7 @@
 
 1. **Start the backend server:**
     ```bash
-    cd blogApp
+    cd Aikarthya_hack24
     npm run dev
     ```
 
@@ -74,12 +74,4 @@ BlogApp/
 ├── package.json
 └── README.md
 ```
-
-## Future Goals
-Implemetation of Payment gateway to make application commercial
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request.
-
 
