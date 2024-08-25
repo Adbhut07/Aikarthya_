@@ -26,7 +26,7 @@ export default function SideBar() {
           </Typography>
         </div>
         <List>
-          <Link to="dashboard">
+          <Link to="/dashboard">
             <ListItem>
               <ListItemPrefix>
                 <PresentationChartBarIcon className="h-5 w-5" />
@@ -35,7 +35,7 @@ export default function SideBar() {
             </ListItem>
           </Link>
 
-          <Link to="edit-profile">
+          <Link to="/edit-profile">
             <ListItem>
               <ListItemPrefix>
                 <UserCircleIcon className="h-5 w-5" />
@@ -44,7 +44,7 @@ export default function SideBar() {
             </ListItem>
           </Link>
 
-          <Link to={"inbox"}>
+          <Link to={"/inbox"}>
 
           <ListItem>
             <ListItemPrefix>

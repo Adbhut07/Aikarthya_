@@ -1,14 +1,58 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FcGoogle } from 'react-icons/fc';
-import LOGO from '../assets/images/image 1.png';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import PIC from '../assets/images/lozo.gif'; // Updated import for the GIF
+import axios from 'axios';
+import toast from "react-hot-toast"
+import { useDispatch, useSelector } from 'react-redux';
+import { signInStart, signInSuccess, signInFailure} from '../redux/user/userSlice.js';
+import OAuth from './OAuth';
 
 const LoginSection = () => {
-  const handleSubmit = (e) => {
+
+  const [formData, setFormData] = useState({});
+  const {loading, error:errorMessage, currentUser} = useSelector(state => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
+
+  useEffect(() => {
+    if(errorMessage) {
+        toast.error(errorMessage);
+    }
+  }, [errorMessage]); // Trigger toast.error only when errorMessage changes
+
+  const handleChange = (e)=>{
+    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
+  }
+
+  const handleSubmit = async (e) =>{
     e.preventDefault();
-    // Handle form submission
-  };
+    const success = handleInputErrors(formData);
+    if(!success)
+      return;
+
+    try {
+      dispatch(signInStart());
+      const res = await axios.post("/api/auth/signin", formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (res.status === 200) {
+        console.log("hi");
+        dispatch(signInSuccess(res.data)); // Dispatch signInSuccess with response data
+        navigate("/");
+      } else {
+        dispatch(signInFailure(res.data.message)); // Dispatch signInFailure with error message
+      }
+    } catch (error) {
+      dispatch(signInFailure(error.response.data.error));
+    } 
+  }
 
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-gray-100 via-white to-gray-100 font-sans">
@@ -20,7 +64,7 @@ const LoginSection = () => {
           <div className="text-center">
             <h2 className="text-4xl font-bold text-gray-800">Sign in to Aikarthya</h2>
           </div>
-          <button
+          {/* <button
             type="button"
             className="group relative flex w-full justify-center rounded-lg border border-gray-300 bg-white py-3 px-6 text-base font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
           >
@@ -28,7 +72,8 @@ const LoginSection = () => {
               <FcGoogle className="h-6 w-6" aria-hidden="true" />
             </span>
             Sign in with Google
-          </button>
+          </button> */}
+          <OAuth />
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300" />
@@ -41,15 +86,16 @@ const LoginSection = () => {
             <div className="space-y-5 rounded-md shadow-sm">
               <div>
                 <label htmlFor="username" className="sr-only">
-                  Username or Email
+                  Email
                 </label>
                 <input
-                  id="username"
-                  name="username"
+                  id="email"
+                  name="email"
                   type="text"
                   required
+                  onChange={handleChange}
                   className="relative block w-full appearance-none rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-base"
-                  placeholder="Username or Email"
+                  placeholder="Email"
                 />
               </div>
               <div>
@@ -61,6 +107,7 @@ const LoginSection = () => {
                   name="password"
                   type="password"
                   required
+                  onChange={handleChange}
                   className="relative block w-full appearance-none rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-gray-500 focus:outline-none focus:ring-gray-500 sm:text-base"
                   placeholder="Password"
                 />
@@ -97,3 +144,18 @@ const LoginSection = () => {
 };
 
 export default LoginSection;
+
+function handleInputErrors({email, password}) {
+
+	if (!email || !password) {
+		toast.error("Please fill in all fields");
+		return false;
+	}
+
+	if (password.length < 6) {
+		toast.error("Password must be at least 6 characters");
+		return false;
+	}
+
+	return true;
+}
