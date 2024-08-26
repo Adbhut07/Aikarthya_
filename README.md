@@ -58,7 +58,7 @@
 ## Folder Structure
 
 ```
-BlogApp/
+Aikarthya/
 ├── backend/        # Node.js backend code
 │   ├── controllers/
 │   ├── models/
